@@ -6,7 +6,9 @@ import {
   signOut, 
   user 
 } from '@angular/fire/auth';
-import { Firestore, doc, setDoc } from '@angular/fire/firestore';
+import { Firestore, doc, setDoc, docData } from '@angular/fire/firestore';
+import { Observable, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -44,4 +46,32 @@ export class AuthService {
   logout() {
     return signOut(this.auth);
   }
+
+   
+  // 4. Esta función devuelve un Observable con los datos de Firestore del usuario actual
+  getUsuarioData(): Observable<any> {
+    return this.user$.pipe(
+      switchMap(user => {
+        if (user) {
+          // Si hay un usuario logueado, buscamos su documento en la colección 'usuarios'
+          const userDocRef = doc(this.firestore, `usuarios/${user.uid}`);
+          return docData(userDocRef);
+        } else {
+          // Si no hay usuario, devolvemos null
+        return of(null);
+        }
+      })
+    );
+  }
+
+  // 5. Obtener el objeto de usuario actual (Promesa)
+  getUsuarioActual() {
+    return new Promise((resolve) => {
+      const unsub = this.auth.onAuthStateChanged(user => {
+        unsub();
+        resolve(user);
+      });
+    });
+  }
+
 }

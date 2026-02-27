@@ -1,13 +1,33 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>historial</ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Mi Historial</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">historial</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content color="light">
+  <div *ngIf="asistencias.length === 0" class="ion-text-center ion-padding">
+    <ion-icon name="calendar-outline" style="font-size: 64px; color: gray;"></ion-icon>
+    <p>Aún no tienes registros de asistencia.</p>
+  </div>
+
+  <ion-card *ngFor="let item of asistencias">
+    <ion-item lines="none">
+      <ion-avatar slot="start">
+        <img [src]="'data:image/jpeg;base64,' + item.foto" />
+      </ion-avatar>
+      <ion-label>
+        <h2>{{ item.tipo }}</h2>
+        <p>{{ item.fecha | date: 'dd/MM/yyyy HH:mm' }} hs</p>
+      </ion-label>
+      <ion-badge [color]="item.tipo === 'Entrada' ? 'success' : 'warning'" slot="end">
+        {{ item.tipo }}
+      </ion-badge>
+    </ion-item>
+    
+    <ion-card-content style="font-size: 0.8em;">
+      <ion-icon name="location-outline"></ion-icon> 
+      Lat: {{ item.ubicacion.latitud | number:'1.4-4' }} | 
+      Lng: {{ item.ubicacion.longitud | number:'1.4-4' }}
+    </ion-card-content>
+  </ion-card>
 </ion-content>

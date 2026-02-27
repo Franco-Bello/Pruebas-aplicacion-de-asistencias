@@ -1,13 +1,86 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>home</ion-title>
+  <ion-toolbar color="primary">
+    <ion-title>Asistencia ITS</ion-title>
+
+    <ion-buttons slot="end">
+      
+      <ion-button routerLink="/historial">
+        <ion-icon slot="icon-only" name="time-outline"></ion-icon>
+      </ion-button>
+
+      <ion-button (click)="logout()">
+        <ion-icon slot="icon-only" name="log-out-outline" color="light"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">home</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  
+  <div *ngIf="userData; else cargando">
+    <h2 class="ion-margin-bottom">¡Bienvenido, {{ userData.nombre }}!</h2>
+
+    <ion-card class="ion-no-margin">
+      <ion-card-header>
+        <ion-card-title>Registro de Asistencia</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content class="ion-text-center">
+        <p>Paso 1: Validar ubicación geográfica</p>
+        
+        <div class="ion-margin-vertical">
+          <ion-icon 
+            [name]="estaEnZona ? 'checkmark-circle' : 'location-outline'" 
+            [color]="estaEnZona ? 'success' : (mensajeUbicacion.includes('Fuera') ? 'danger' : 'primary')"
+            style="font-size: 60px;">
+          </ion-icon>
+        </div>
+
+        <ion-text [color]="estaEnZona ? 'success' : 'dark'">
+          <p><strong>{{ mensajeUbicacion }}</strong></p>
+        </ion-text>
+
+        <ion-button 
+          expand="block" 
+          (click)="verificarUbicacion()" 
+          [disabled]="validandoUbicacion"
+          class="ion-margin-top">
+          <ion-spinner name="crescent" *ngIf="validandoUbicacion"></ion-spinner>
+          <span *ngIf="!validandoUbicacion">Verificar Posición</span>
+        </ion-button>
+
+        <div *ngIf="estaEnZona" class="ion-margin-top animate__animated animate__fadeIn">
+          <hr class="ion-margin-vertical">
+          <p><strong>Paso 2: Capturar Selfie y Registrar</strong></p>
+          
+          <ion-button 
+            expand="block" 
+            color="success"
+            (click)="tomarFotoYRegistrar('Entrada')"
+            class="ion-margin-top">
+            <ion-icon slot="start" name="camera-outline"></ion-icon>
+            Registrar Entrada
+          </ion-button>
+
+          <ion-button 
+            expand="block" 
+            color="warning"
+            (click)="tomarFotoYRegistrar('Salida')"
+            class="ion-margin-top">
+            <ion-icon slot="start" name="camera-outline"></ion-icon>
+            Registrar Salida
+          </ion-button>
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <ng-template #cargando>
+    <div class="ion-text-center" style="margin-top: 50px;">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando datos del servidor...</p>
+    </div>
+  </ng-template>
+
 </ion-content>
